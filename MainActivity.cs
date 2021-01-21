@@ -36,8 +36,8 @@ namespace BtcUsdCalculator
 
             // Subscribe to event
             btn_updateprice.Click += UpdatePriceOnClick;
-            btcs.TextChanged += CalculateUSDs;
-            usds.TextChanged += CalculateBTCs;
+            btcs.TextChanged += HandlerUSDs;
+            usds.TextChanged += HandlerBTCs;
             
         }
 
@@ -46,25 +46,40 @@ namespace BtcUsdCalculator
             GetCurrentPriceUsd();
         }
         
-        void CalculateUSDs(object sender, EventArgs e)
+        void HandlerUSDs(object sender, EventArgs e)
         {
-            usds.TextChanged -= CalculateBTCs;
+            usds.TextChanged -= HandlerBTCs;
             usds.Text = "";
+
+            CalculateUSDs();
+
+            usds.TextChanged += HandlerBTCs;
+        }
+
+        void CalculateUSDs()
+        {
             double inBtcs;
 
-            if (!(string.IsNullOrEmpty(btcs.Text)) && 
+            if (!(string.IsNullOrEmpty(btcs.Text)) &&
                 double.TryParse(btcs.Text, out inBtcs))
             {
                 double outUSDs = priceInUSD * inBtcs;
                 usds.Text = outUSDs.ToString();
             }
-
-            usds.TextChanged += CalculateBTCs;
         }
-        void CalculateBTCs(object sender, EventArgs e)
+
+        void HandlerBTCs(object sender, EventArgs e)
         {
-            btcs.TextChanged -= CalculateUSDs;
+            btcs.TextChanged -= HandlerUSDs;
             btcs.Text = "";
+
+            CalculateBTCs();
+
+            btcs.TextChanged += HandlerUSDs;
+        }
+
+        void CalculateBTCs()
+        {            
             double inUSDs;
 
             if (!(string.IsNullOrEmpty(usds.Text)) &&
@@ -72,9 +87,7 @@ namespace BtcUsdCalculator
             {
                 double outBTCs = inUSDs / priceInUSD;
                 btcs.Text = outBTCs.ToString();
-            }
-
-            btcs.TextChanged += CalculateUSDs;
+            }           
         }
         
         // Perform request to get usds value and set the price to be used by calculator.
@@ -87,7 +100,23 @@ namespace BtcUsdCalculator
             // System.Console.WriteLine("price: --> " + priceInUSD.ToString());
             // By default start calculation on 1 btc, done here because need to wait 
             // RestService get the price for caculations.
-            btcs.Text = "1";
+            if (string.IsNullOrEmpty(btcs.Text)) {
+                btcs.Text = "1";
+            } 
+            else
+            {
+                double inBtcs = Convert.ToDouble(btcs.Text);
+                // Cast to int to verify if the value is integer, then convert to USD when refresh button is clicked
+                int btcsInt = (int)inBtcs;
+                if (btcsInt == inBtcs)
+                {
+                    CalculateUSDs();
+                }
+                else
+                {
+                    CalculateBTCs();
+                }
+            }
         }
 
 
