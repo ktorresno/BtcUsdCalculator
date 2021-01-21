@@ -1,0 +1,14 @@
+<resources>
+    <string name="app_name">BTC to USD Calculator</string>
+    <string name="action_settings">Settings</string>
+
+	<!--Custom labels-->
+
+	<string name="btcs_lbl">BTC</string>
+	<string name="eq_sign_lbl">=</string>
+	<string name="usds_lbl">USD</string>
+
+	<string name="curr_usd_pc_lbl">USD Price: $</string>
+	<string name="curr_usd_pc_dflt_lbl">0.00</string>
+	<string name="rfsh_btn_lbl">Refresh</string>
+</resources>
